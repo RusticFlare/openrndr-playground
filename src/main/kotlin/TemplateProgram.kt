@@ -7,14 +7,13 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 fun main() = application {
+    val image = loadImage("data/images/mateus-guimaraes-uCqu7KVacG8-unsplash.jpg")
     configure {
-        width = 768
-        height = 576
+        width = image.width
+        height = image.height
     }
 
     program {
-        val image = loadImage("data/images/pm5544.png")
-        val font = loadFont("data/fonts/default.otf", 64.0)
 
         extend {
             drawer.drawStyle.colorMatrix = tint(ColorRGBa.WHITE.shade(0.2))
@@ -23,7 +22,6 @@ fun main() = application {
             drawer.fill = ColorRGBa.PINK
             drawer.circle(cos(seconds) * width / 2.0 + width / 2.0, sin(0.5 * seconds) * height / 2.0 + height / 2.0, 140.0)
 
-            drawer.fontMap = font
             drawer.fill = ColorRGBa.WHITE
             drawer.text("OPENRNDR", width / 2.0, height / 2.0)
         }
