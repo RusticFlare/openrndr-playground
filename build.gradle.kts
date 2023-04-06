@@ -32,7 +32,7 @@ val orxFeatures = setOf<String>(
 //  "orx-keyframer",      
 //  "orx-kinect-v1",
 //  "orx-kotlin-parser",
-//  "orx-mesh-generators",
+    "orx-mesh-generators",
 //  "orx-midi",
 //  "orx-minim",
     "orx-no-clear",
@@ -112,9 +112,11 @@ dependencies {
         Logging.NONE -> {
             runtimeOnly(libs.slf4j.nop)
         }
+
         Logging.SIMPLE -> {
             runtimeOnly(libs.slf4j.simple)
         }
+
         Logging.FULL -> {
             runtimeOnly(libs.log4j.slf4j2)
             runtimeOnly(libs.log4j.core)
@@ -172,6 +174,7 @@ tasks {
                         into("build/jpackage/openrndr-application/data")
                     }
                 }
+
                 OperatingSystem.MAC_OS -> {
                     copy {
                         from("data") {
@@ -240,11 +243,13 @@ class Openrndr {
             "aarch64", "arm-v8" -> "macos-arm64"
             else -> "macos"
         }
+
         OperatingSystem.LINUX -> when (val h = DefaultNativePlatform("current").architecture.name) {
             "x86-64" -> "linux-x64"
             "aarch64" -> "linux-arm64"
             else -> throw IllegalArgumentException("architecture not supported: $h")
         }
+
         else -> throw IllegalArgumentException("os not supported")
     }
 
@@ -287,6 +292,7 @@ class Openrndr {
         }
     }
 }
+
 val openrndr = Openrndr()
 
 if (properties["openrndr.tasks"] == "true") {

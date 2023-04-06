@@ -59,9 +59,9 @@ fun <E> List<List<E>>.transpose(): List<List<E>> {
     fun <E> List<E>.tail(): List<E> = this.takeLast(this.size - 1)
     fun <E> E.append(xs: List<E>): List<E> = listOf(this).plus(xs)
 
-    filter { it.isNotEmpty() }.let { ys ->
-        return when (ys.isNotEmpty()) {
-            true -> ys.map { it.head() }.append(ys.map { it.tail() }.transpose())
+    return filter { it.isNotEmpty() }.let { ys ->
+        when {
+            ys.isNotEmpty() -> ys.map { it.head() }.append(ys.map { it.tail() }.transpose())
             else -> emptyList()
         }
     }
