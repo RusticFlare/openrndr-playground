@@ -41,16 +41,19 @@ fun main() = application {
             @DoubleParameter("Ball Radius", low = 1.0, high = 100.0, order = 4)
             var ballRadius: Double = 10.0
 
-            @DoubleParameter("Ball Placement Radius", low = 1.0, high = 500.0, order = 5)
+            @DoubleParameter("Ball Placement Radius", low = 1.0, high = 200.0, order = 5)
             var ballPlacementRadius: Double = 50.0
 
-            @DoubleParameter("Distance Lighten", low = 0.0, high = 1.0, order = 6)
+            @DoubleParameter("Ball Size Range", low = 0.0, high = 50.0, order = 6)
+            var ballSizeRange: Double = 0.0
+
+            @DoubleParameter("Distance Lighten", low = 0.0, high = 1.0, order = 7)
             var distanceLighten: Double = 0.0
 
             @DoubleParameter("Stroke Weight", low = 1.0, high = 100.0)
             var strokeWeight: Double = 1.0
 
-            @DoubleParameter("Placement Radius", low = 1.0, high = 500.0)
+            @DoubleParameter("Placement Radius", low = 1.0, high = 200.0)
             var placementRadius: Double = 50.0
 
             @DoubleParameter("Radius", low = 1.0, high = 500.0)
@@ -61,6 +64,9 @@ fun main() = application {
 
             @IntParameter("Circles", low = 1, high = 10)
             var circles: Int = 1
+
+            @DoubleParameter("Letterbox Border", low = 0.0, high = 50.0)
+            var letterboxBorder: Double = 0.0
 
             @Vector2Parameter("Letterbox", min = 0.0, max = 1000.0)
             var letterbox: Vector2 = Vector2(x = 250.0, y = 750.0)
@@ -98,19 +104,26 @@ fun main() = application {
                 .forEach { center ->
                     val yRatio = (1 - (center.y / drawer.bounds.height)) * settings.distanceLighten
                     drawer.fill = settings.ballColor.mix(ColorRGBa.WHITE, factor = yRatio)
-                        .copy(alpha = 0.6)
-                    drawer.circle(Circle(center = center, radius = settings.ballRadius))
+                    val radius = settings.ballRadius + runCatching {  random.nextDouble(
+                        from = -settings.ballSizeRange,
+                        until = settings.ballSizeRange,
+                    ) }.getOrDefault(0.0)
+                    drawer.circle(Circle(center = center, radius = radius))
                 }
+            drawer.stroke = null
+            drawer.fill = ColorRGBa.WHITE
+            fun Vector2.letterBox() = Rectangle(
+                corner = drawer.bounds.center - this.div(scale = 2.0),
+                width = this.x,
+                height = this.y,
+            )
+            val letterbox = settings.letterbox.letterBox()
+            drawer.shape(drawer.bounds.shape.difference(letterbox.shape))
+
             drawer.strokeWeight = 1.0
             drawer.stroke = settings.ballColor
-            drawer.fill = ColorRGBa.WHITE
-            val letterbox = Rectangle(
-                drawer.bounds.center - settings.letterbox.div(scale = 2.0),
-                width = settings.letterbox.x,
-                height = settings.letterbox.y
-            ).shape
-            drawer.bounds.shape.difference(letterbox)
-            drawer.shape(drawer.bounds.shape.difference(letterbox))
+            drawer.fill = null
+            drawer.rectangle((settings.letterbox + Vector2(settings.letterboxBorder, settings.letterboxBorder)).letterBox())
         }
     }
 }
